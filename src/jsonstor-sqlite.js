@@ -559,7 +559,7 @@ module.exports = {
 			if ( !Storage.Catalog.table_exists ) { return []; }
 
 			// Convert criteria to an sql expression.
-			let sql_expression_options = jsongin.Clone( SQL_DIALECT );
+			let sql_expression_options = Object.assign( {}, SQL_DIALECT );
 			sql_expression_options.AllowedFields = {};
 			let payload_sync = ( Storage.Catalog.payload_field !== null ) && Storage.Settings.PayloadSync;
 			for ( let key in Storage.Catalog.fields )
@@ -578,7 +578,16 @@ module.exports = {
 				entry.is_projection = payload_sync;
 				sql_expression_options.AllowedFields[ key ] = entry;
 			}
-			let sql_expr = jsonstor.SqlExpression( Criteria, sql_expression_options );
+			// ***The clause narrows the search; the residual decides the answer.***
+			// Today the residual is the whole criteria, so the filtering below is
+			// unchanged - but reading it from the translation rather than closing over
+			// Criteria is what lets a translator earn a narrower one without this
+			// adapter changing again.
+			let translation = jsonstor.SqlExpression.Translate( {
+				Criteria: Criteria,
+				Options: sql_expression_options,
+			} );
+			let sql_expr = translation.Pushdown;
 
 			// Build sql statement.
 			let sql = `SELECT * FROM ${table_reference()}`;
@@ -598,7 +607,7 @@ module.exports = {
 			for ( let index = 0; index < documents.length; index++ )
 			{
 				let document = row_to_document( documents[ index ] );
-				if ( jsongin.Query( document, Criteria ) )
+				if ( jsongin.Query( document, translation.Residual ) )
 				{
 					filtered.push( document );
 					if ( MaxDocs && ( filtered.length === MaxDocs ) ) { break; }
@@ -745,6 +754,55 @@ module.exports = {
 			return true;
 		}
 
+
+		//=====================================================================
+		// SqlTranslation
+		//
+		// ***What a clause-translating adapter advertises beyond the Storage interface.***
+		// This is how a shared suite, or any other caller, can ask what this adapter would
+		// render and then ask the server what that rendering admits. Both halves were private
+		// closures, and a suite which reconstructed them would have been measuring its own
+		// copy of the dialect rather than the one this adapter actually uses.
+		//
+		// ***Its presence is the capability declaration.*** An adapter which does not push a
+		// clause down does not define it, and a suite which needs one skips that engine
+		// rather than consulting a second list somewhere which could disagree.
+		//
+		// Dialect answers a copy, so a caller cannot alter what this adapter renders with.
+		//=====================================================================
+
+		Storage.SqlTranslation = {
+			TranslatorName: 'SqlExpression',
+
+			// ***How this engine spells SQL, which is not the same question as how it behaves.***
+			// The dialect options below say what SqlExpression renders; this says whose SQL the
+			// result is, so a caller holding a statement of its own - a probe, a DDL sample -
+			// can pick the spelling this server will accept. Nothing in jsonstor branches on it.
+			DialectName: 'sqlite',
+
+			// The options this adapter renders with. A copy, so a caller cannot alter them.
+			Dialect: function () { return Object.assign( {}, SQL_DIALECT ); },
+
+			// ***A logical type to this engine's spelling for it.*** A shared suite declares the
+			// columns it wants in jsongin's own short types and cannot know what to call them
+			// here - and a column's declared type is the promise this adapter keeps by writing
+			// NULL where a value does not match it, so the suite must not guess.
+			ColumnTypes: {
+				b: 'BOOLEAN',
+				n: 'REAL',
+				s: 'TEXT',
+				i: 'INTEGER',
+			},
+
+			// ***Normalized on purpose.*** SQL_Passthrough is not advertised directly because
+			// the two SQL adapters do not agree about it: mysql answers { results, fields } and
+			// sqlite answers { results, info }, and sqlite needs a separate DDL path because
+			// better-sqlite3's prepare() is not one. A surface whose contract differs between
+			// its implementations is worse than none, so callers get rows, or a promise that
+			// the statement ran.
+			Query: async function ( Sql, Parameters ) { return ( await SQL_Passthrough( Sql, Parameters || [] ) ).results; },
+			Execute: async function ( Sql ) { return await SQL_Execute( Sql ); },
+		};
 
 		//=====================================================================
 		// DropStorage

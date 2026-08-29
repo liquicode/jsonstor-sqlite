@@ -9,11 +9,11 @@ Every test in this family lives in [`@liquicode/jsonstor-docs`](https://github.c
 
 ## Engine Tests
 
-| Engine                    |            A |           B |           C |          D |          M |            N |          Z |             Total |
-|---------------------------|-------------:|------------:|------------:|-----------:|-----------:|-------------:|-----------:|------------------:|
-| jsonstor-sqlite           | 10/0 (2.31s) |  27/0 (7ms) | 7/0 (283ms) | 9/0 (51ms) | 26/0 (4ms) | 39/0 (174ms) | 2/0 (48ms) | **120/0** (2.87s) |
-| jsonstor-sqlite (columns) | 10/0 (2.08s) | 27/0 (13ms) | 7/0 (355ms) | 9/0 (96ms) | 26/0 (6ms) | 39/0 (246ms) | 2/0 (63ms) | **120/0** (2.86s) |
-| **total**                 |     **20/0** |    **54/0** |    **14/0** |   **18/0** |   **52/0** |     **78/0** |    **4/0** | **240/0** (5.73s) |
+| Engine                    |            A |          B |           C |           D |          E |          M |            N |          Z |             Total |
+|---------------------------|-------------:|-----------:|------------:|------------:|-----------:|-----------:|-------------:|-----------:|------------------:|
+| jsonstor-sqlite           | 10/0 (2.62s) | 27/0 (8ms) | 7/0 (278ms) |  9/0 (52ms) | 6/0 (46ms) | 26/0 (2ms) | 39/0 (173ms) | 2/0 (55ms) | **126/0** (3.24s) |
+| jsonstor-sqlite (columns) | 10/0 (2.52s) | 27/0 (9ms) | 7/0 (477ms) | 9/0 (108ms) | 6/0 (81ms) | 26/0 (6ms) | 39/0 (257ms) | 2/0 (72ms) | **126/0** (3.53s) |
+| **total**                 |     **20/0** |   **54/0** |    **14/0** |    **18/0** |   **12/0** |   **52/0** |     **78/0** |    **4/0** | **252/0** (6.76s) |
 
 Each cell is ***passing/failing (duration)***.
 
@@ -23,9 +23,22 @@ Each cell is ***passing/failing (duration)***.
 | B      | Rainbow Query Tests        |
 | C      | UserInfo Permissions Tests |
 | D      | Engine Contract Tests      |
+| E      | Extension Operator Tests   |
 | M      | MongoDB Tutorial           |
 | N      | MongoDB Reference          |
 | Z      | Ad-Hoc Tests               |
+
+## Sql Tests
+
+| Engine          |          P |          Q |         R |           Total |
+|-----------------|-----------:|-----------:|----------:|----------------:|
+| jsonstor-sqlite | 23/0 (9ms) | 20/0 (3ms) | 2/0 (1ms) | **45/0** (13ms) |
+
+| Column | Category              |
+|--------|-----------------------|
+| P      | Predicate Inventory   |
+| Q      | Criteria Combinations |
+| R      | Known Narrowing       |
 
 ## Failures
 
