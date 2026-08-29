@@ -28,7 +28,7 @@
 		"mongo query"
 	],
 	"devDependencies": {
-		"@liquicode/devops": "^0.0.21"
+		"@liquicode/devops": "^0.1.0"
 	},
 	"dependencies": {
 		"@liquicode/jsongin": "^0.1.0",
