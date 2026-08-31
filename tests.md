@@ -9,11 +9,11 @@ Every test in this family lives in [`@liquicode/jsonstor-docs`](https://github.c
 
 ## Engine Tests
 
-| Engine                    |            A |           B |           C |          D |          E |          M |            N |          Z |             Total |
-|---------------------------|-------------:|------------:|------------:|-----------:|-----------:|-----------:|-------------:|-----------:|------------------:|
-| jsonstor-sqlite           | 10/0 (2.02s) |  27/0 (8ms) | 7/0 (280ms) | 9/0 (49ms) | 6/0 (51ms) | 26/0 (6ms) | 39/0 (170ms) | 2/0 (38ms) | **126/0** (2.62s) |
-| jsonstor-sqlite (columns) | 10/0 (1.97s) | 27/0 (11ms) | 7/0 (356ms) | 9/0 (97ms) | 6/0 (71ms) | 26/0 (5ms) | 39/0 (259ms) | 2/0 (66ms) | **126/0** (2.83s) |
-| **total**                 |     **20/0** |    **54/0** |    **14/0** |   **18/0** |   **12/0** |   **52/0** |     **78/0** |    **4/0** | **252/0** (5.45s) |
+| Engine                    |            A |           B |           C |          D |          E |         F |          M |            N |          Z |             Total |
+|---------------------------|-------------:|------------:|------------:|-----------:|-----------:|----------:|-----------:|-------------:|-----------:|------------------:|
+| jsonstor-sqlite           | 10/0 (1.97s) |  27/0 (7ms) | 7/0 (278ms) | 9/0 (49ms) | 6/0 (53ms) | 3/0 (0ms) | 26/0 (6ms) | 39/0 (161ms) | 2/0 (40ms) | **129/0** (2.56s) |
+| jsonstor-sqlite (columns) | 10/0 (1.92s) | 27/0 (10ms) | 7/0 (361ms) | 9/0 (95ms) | 6/0 (67ms) | 3/0 (1ms) | 26/0 (4ms) | 39/0 (245ms) | 2/0 (67ms) | **129/0** (2.77s) |
+| **total**                 |     **20/0** |    **54/0** |    **14/0** |   **18/0** |   **12/0** |   **6/0** |   **52/0** |     **78/0** |    **4/0** | **258/0** (5.33s) |
 
 Each cell is ***passing/failing (duration)***.
 
@@ -24,6 +24,7 @@ Each cell is ***passing/failing (duration)***.
 | C      | UserInfo Permissions Tests |
 | D      | Engine Contract Tests      |
 | E      | Extension Operator Tests   |
+| F      | Pushdown Tests             |
 | M      | MongoDB Tutorial           |
 | N      | MongoDB Reference          |
 | Z      | Ad-Hoc Tests               |
@@ -32,7 +33,7 @@ Each cell is ***passing/failing (duration)***.
 
 | Engine          |          P |          Q |         R |          Total |
 |-----------------|-----------:|-----------:|----------:|---------------:|
-| jsonstor-sqlite | 23/0 (2ms) | 20/0 (3ms) | 2/0 (0ms) | **45/0** (5ms) |
+| jsonstor-sqlite | 23/0 (4ms) | 20/0 (2ms) | 2/0 (0ms) | **45/0** (6ms) |
 
 | Column | Category              |
 |--------|-----------------------|
