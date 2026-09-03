@@ -9,11 +9,11 @@ Every test in this family lives in [`@liquicode/jsonstor-docs`](https://github.c
 
 ## Engine Tests
 
-| Engine                    |            A |          B |           C |           D |          E |         F |          M |            N |          Z |             Total |
-|---------------------------|-------------:|-----------:|------------:|------------:|-----------:|----------:|-----------:|-------------:|-----------:|------------------:|
-| jsonstor-sqlite           | 10/0 (1.87s) | 27/0 (7ms) | 7/0 (261ms) | 14/0 (54ms) | 6/0 (43ms) | 3/0 (1ms) | 26/0 (4ms) | 39/0 (153ms) | 2/0 (42ms) | **134/0** (2.44s) |
-| jsonstor-sqlite (columns) | 10/0 (1.83s) | 27/0 (9ms) | 7/0 (344ms) | 14/0 (88ms) | 6/0 (66ms) | 3/0 (1ms) | 26/0 (6ms) | 39/0 (252ms) | 2/0 (59ms) | **134/0** (2.65s) |
-| **total**                 |     **20/0** |   **54/0** |    **14/0** |    **28/0** |   **12/0** |   **6/0** |   **52/0** |     **78/0** |    **4/0** | **268/0** (5.09s) |
+| Engine                    |            A |           B |           C |           D |          E |         F |         G |          M |            N |          Z |             Total |
+|---------------------------|-------------:|------------:|------------:|------------:|-----------:|----------:|----------:|-----------:|-------------:|-----------:|------------------:|
+| jsonstor-sqlite           | 10/0 (2.00s) |  27/0 (7ms) | 7/0 (292ms) | 14/0 (49ms) | 6/0 (45ms) | 3/0 (0ms) | 6/0 (0ms) | 26/0 (5ms) | 39/0 (154ms) | 2/0 (44ms) | **140/0** (2.60s) |
+| jsonstor-sqlite (columns) | 10/0 (1.95s) | 27/0 (10ms) | 7/0 (373ms) | 14/0 (96ms) | 6/0 (71ms) | 3/0 (1ms) | 6/0 (1ms) | 26/0 (3ms) | 39/0 (257ms) | 2/0 (64ms) | **140/0** (2.83s) |
+| **total**                 |     **20/0** |    **54/0** |    **14/0** |    **28/0** |   **12/0** |   **6/0** |  **12/0** |   **52/0** |     **78/0** |    **4/0** | **280/0** (5.43s) |
 
 Each cell is ***passing/failing (duration)***.
 
@@ -25,6 +25,7 @@ Each cell is ***passing/failing (duration)***.
 | D      | Engine Contract Tests      |
 | E      | Extension Operator Tests   |
 | F      | Pushdown Tests             |
+| G      | Mango Acceptance Tests     |
 | M      | MongoDB Tutorial           |
 | N      | MongoDB Reference          |
 | Z      | Ad-Hoc Tests               |
@@ -33,7 +34,7 @@ Each cell is ***passing/failing (duration)***.
 
 | Engine          |          P |          Q |         R |                    S |          T |                      Total |
 |-----------------|-----------:|-----------:|----------:|---------------------:|-----------:|---------------------------:|
-| jsonstor-sqlite | 23/0 (3ms) | 20/0 (3ms) | 2/0 (0ms) | 9/0 +2 skipped (2ms) | 17 skipped | **54/0** +19 skipped (8ms) |
+| jsonstor-sqlite | 23/0 (4ms) | 20/0 (3ms) | 2/0 (0ms) | 9/0 +2 skipped (2ms) | 17 skipped | **54/0** +19 skipped (9ms) |
 
 | Column | Category              |
 |--------|-----------------------|
