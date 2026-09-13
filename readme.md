@@ -55,28 +55,24 @@ Settings
 | `Path` | ***Yes*** | - | Path to the Sqlite database file. Pass `":memory:"` for a database which lives only as long as the storage does. |
 | `Table` | ***Yes*** | - | The name of the table to use. |
 | `PrimaryKey` | No | `""` | The column to treat as the document identifier. Empty discovers it from the table: a column named `_id`, then an auto-increment key. `IdField` is the former spelling and still works. |
-| `PrimaryKeyMutable` | No | `false` | Allow an update or a replacement to change the identifier. Off by default, so an operation which would move it is refused by name rather than silently discarded. |
-| `ModifySchema` | No | `false` | Allow the adapter to create the table and the columns it is told to create. It never adds a column because a document had a field. |
-| `PayloadColumn` | No | `""` | The column which stores the document as JSON text. Empty means none, and then every field must already be a column. Created when missing if `ModifySchema` is `true`. |
-| `PayloadSync` | No | `false` | Store the whole document in the payload, making the other columns an index over it. When `false` the payload holds only the fields which have no column. |
+| `PrimaryKeyMutable` | No | `false` | Allow an update or replacement to change the identifier. When `false`, such an operation is refused. |
+| `ModifySchema` | No | `false` | Allow the adapter to create the table, the `Columns` and the `PayloadColumn`. It never adds a column for a new document field. |
+| `PayloadColumn` | No | `""` | The column which stores the document as JSON text. Empty means none, and every field must have a column. Created if missing when `ModifySchema` is `true`. |
+| `PayloadSync` | No | `false` | Store the whole document in the payload, and copy fields into their columns for filtering. When `false`, the payload holds only fields without a column. |
 | `Columns` | No | `[]` | Columns to create, as `{ Name, Type, Key }`. Used only when this adapter creates the table; afterwards the table itself is the authority. |
 
 Peculiarities
 ---------------------------------------------------------------------
 
-- ***A criteria becomes a `WHERE` clause ***and*** is handed to `jsongin`.*** The clause is a pre-filter which decides how many rows leave the database; `jsongin.Query` then decides which of them match. So an operator `SqlExpression` cannot translate is ***left out of the statement rather than refused***, and the result broadens: more rows travel, and the answer is the same one every other adapter gives.
-- ***The table is an index over the document, not the document.*** Real columns are what the `WHERE` clause can filter on; the `PayloadColumn` carries the document itself. This is the same shape DynamoDB uses, and it is what lets a relational table answer questions about arbitrary JSON. ***Which of three configurations you get is decided by two settings:***
-  - ***No `PayloadColumn`.*** The document *is* the columns. A field with no column, or a value SQL has no form for, is ***refused by name*** rather than dropped. Use this to store flat documents in a table you already have.
-  - ***`PayloadColumn` with `PayloadSync: false`.*** The columns hold the fields they have, and the payload holds everything else. Nothing is duplicated, and a column another application writes stays visible to jsonstor.
-  - ***`PayloadColumn` with `PayloadSync: true`.*** The payload holds the whole document and the columns become an index over it. ***This is the only configuration which answers every question the other adapters answer***, because the payload is real JSON: an absent field stays apart from one holding null, a number does not come back a string, and an object keeps its field order.
-- ***A column which mirrors the payload is filtered on, then checked again.*** Under `PayloadSync: true` a value which does not fit its column is stored as `NULL` there and kept in the payload, so every condition on such a column is widened to admit `NULL` and `jsongin` decides the row from the payload. The clause narrows the search; it never narrows the answer.
-- ***Sqlite gives every column a type affinity rather than a type***, so a number written into a `TEXT` column is stored as text and reads back as a string. That is the same round trip `PayloadSync: true` exists to avoid, and it is why a value which does not match its column's affinity is stored as `NULL` there rather than coerced.
-- ***Two differences remain in the configurations which have no payload for a field:***
-  - There is no way to store `undefined`. A query matching a field against `undefined` always fails.
-  - A field missing from an insert is filled with the column default, so an absent field and one holding `null` read back the same. Set `PayloadSync: true` if that distinction matters.
-- ***`ModifySchema: true` lets the adapter alter your database.*** It creates the table, the columns named in `Columns`, and the `PayloadColumn`. ***It never adds a column because a document had a field***, so your schema is what you declared rather than a record of whatever was inserted first.
-- ***A table this adapter creates has a `TEXT` `_id` and nothing else.*** Your `_id` is taken as given and one is minted when you omit it, the way every other adapter behaves. Insertion order is carried by Sqlite's own `rowid`, which is always one past the highest in use, so a collection reads back in the order it was written without a column to record it. A `WITHOUT ROWID` table you bring yourself has no such ordering and is read in the database's order.
-- ***`Path: ":memory:"` is a real database and not a mode.*** It is created when the storage first touches it and discarded when the process ends, and two storages given `":memory:"` do not see each other.
+- ***A criteria becomes a `WHERE` clause, and `jsongin` checks every returned row.*** Conditions SQL cannot express are left out of the clause, so more rows are read, but the result is the same as on any other adapter. See [Translation Layer](/guides/Translation-Layer.md).
+- ***Two settings choose how a document is stored:***
+  - ***No `PayloadColumn`.*** The document is the columns. A field with no column, or a value its column cannot hold, is refused. Use this for flat documents in an existing table.
+  - ***`PayloadColumn` with `PayloadSync: false`.*** Fields with a column are stored there, and every other field in the payload as JSON. A value which does not fit its column is refused.
+  - ***`PayloadColumn` with `PayloadSync: true`.*** The payload holds the whole document, and the columns are copies used for filtering. ***Only this configuration keeps every document exactly***: an absent field stays different from `null`, and a number stays a number. A value which does not fit its column is stored as `NULL` in the column and kept in the payload.
+- ***Without a payload for a field, an absent field reads back as `null`***, so `{ w: { $exists: false } }` does not find a document which never had `w`. Use `PayloadSync: true` if that matters.
+- ***`ModifySchema: true` lets the adapter change your database***: it creates the table, the `Columns` you list, and the `PayloadColumn`. It never adds a column because a document has a new field.
+- ***A table the adapter creates has only a `TEXT` `_id` column***, plus any `Columns` and `PayloadColumn`. Insertion order comes from SQLite's `rowid`. A `WITHOUT ROWID` table you created is read in the database's order.
+- ***`Path: ":memory:"` creates a database which lasts as long as the storage.*** Two storages given `":memory:"` do not share one.
 
 Storage Interface
 ---------------------------------------------------------------------
